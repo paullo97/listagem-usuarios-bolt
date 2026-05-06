@@ -50,9 +50,12 @@
         <mat-form-field appearance="outline">
           <mat-label>Telefone</mat-label>
           <mat-icon matPrefix>phone_outlined</mat-icon>
-          <input matInput formControlName="phone" placeholder="(11) 91234-5678" mask="(00) 00000-0000">
+          <input matInput formControlName="phone" placeholder="(11) 91234-5678" [mask]="getPhoneMask()">
           @if(f['phone'].hasError('required')) {
             <mat-error>Telefone é obrigatório</mat-error>
+          }
+          @if(f['phone'].hasError('invalidPhone')) {
+            <mat-error>Telefone inválido. Digite 10 ou 11 dígitos</mat-error>
           }
         </mat-form-field>
       </div>
@@ -120,14 +123,14 @@
         Cancelar
       </button>
       <button mat-flat-button color="primary" type="submit" class="btn-save"
-        [disabled]="form.invalid || isLoading"
+        [disabled]="form.invalid || (isLoading$ | async)"
         (click)="onSubmit()">
-        @if(isLoading) {
+        @if(isLoading$ | async) {
           <mat-spinner diameter="18" class="btn-spinner"></mat-spinner>
         } @else {
           <mat-icon>check</mat-icon>
         }
-        {{ isLoading ? 'Salvando...' : 'Salvar' }}
+        {{ (isLoading$ | async) ? 'Salvando...' : 'Salvar' }}
       </button>
     </div>
 

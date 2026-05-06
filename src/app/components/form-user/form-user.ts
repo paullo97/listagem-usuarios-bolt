@@ -2,8 +2,12 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subject } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { Actions, ofType, createEffect } from '@ngrx/effects';
+import { Subject, Observable } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { selectLoading, selectSaving } from '../../core/store/selectors/users.selectors';
+import { saveNewUser, saveNewUserSuccess } from '../../core/store/actions/users.actions';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -41,7 +45,7 @@ export class UserForm implements OnInit, OnDestroy {
 
   form!: FormGroup;
   isEditMode = false;
-  isLoading = false;
+  isLoading$!: Observable<boolean>;
 
   private userId: number | null = null;
   private destroy$ = new Subject<void>();
@@ -50,13 +54,16 @@ export class UserForm implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private snackBar: MatSnackBar
-    // private store: Store  ← descomente ao integrar NgRx
+    private snackBar: MatSnackBar,
+    private store: Store,
+    private actions$: Actions
   ) {}
 
   ngOnInit(): void {
+    this.isLoading$ = this.store.select(selectSaving);
     this.buildForm();
     this.checkEditMode();
+    this.setupSuccessListener();
   }
 
   ngOnDestroy(): void {
@@ -72,11 +79,43 @@ export class UserForm implements OnInit, OnDestroy {
     return this.form.get('docType')!;
   }
 
+  setDocType(type: 'cpf' | 'cnpj'): void {
+    setTimeout(() => {
+      this.docType.setValue(type);
+    }, 0);
+  }
+
+  onSubmit(): void {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+
+    this.store.dispatch(saveNewUser({ user: {...this.form.getRawValue(), createdAt: new Date() } }));
+  }
+
+  onCancel(): void {
+    this.router.navigate(['/']);
+  }
+
+  getPhoneMask(): string {
+    const phoneControl = this.form?.get('phone');
+    if (!phoneControl?.value) return '(00) 00000-0000'; 
+    
+    const phoneNumbers = phoneControl.value.replace(/\D/g, '');
+    
+    if (phoneNumbers.length >= 11) {
+      return '(00) 00000-0000';
+    } else {
+      return '(00) 0000-0000';
+    }
+  }
+
   private buildForm(): void {
     this.form = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
-      phone: ['', [Validators.required]],
+      phone: ['', [Validators.required, this.phoneValidator()]],
       docType: ['cpf'],
       document: [
         '',
@@ -119,8 +158,6 @@ export class UserForm implements OnInit, OnDestroy {
   }
 
   private patchForm(user: any): void {
-    // Usa setTimeout para evitar ExpressionChangedAfterItHasBeenCheckedError
-    // e garantir que os campos com máscara funcionem corretamente
     setTimeout(() => {
       this.form.patchValue({
         docType: user.docType ?? 'cpf',
@@ -133,41 +170,33 @@ export class UserForm implements OnInit, OnDestroy {
       });
     }, 0);
   }
-
-  setDocType(type: 'cpf' | 'cnpj'): void {
-    // Usa setTimeout para evitar problemas com o ciclo de detecção
-    setTimeout(() => {
-      this.docType.setValue(type);
-    }, 0);
+  
+  private phoneValidator() {
+    return (control: AbstractControl) => {
+      const value = control.value;
+      if (!value) return null;
+      
+      const phoneNumbers = value.replace(/\D/g, '');
+      
+      if (phoneNumbers.length === 10 || phoneNumbers.length === 11) {
+        return null;
+      }
+      
+      return { invalidPhone: true };
+    };
   }
 
-  onSubmit(): void {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
-    }
-
-    this.isLoading = true;
-
-    const payload = {
-      ...this.form.getRawValue(),
-      updatedAt: new Date(),
-      ...(!this.isEditMode && { createdAt: new Date() }),
-    };
-
-    // ── Mock (remova ao integrar NgRx) ───────────────────────────────────
-    setTimeout(() => {
-      this.isLoading = false;
+  private setupSuccessListener(): void {
+    this.actions$.pipe(
+      ofType(saveNewUserSuccess),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
       this.snackBar.open(
         this.isEditMode ? 'Usuário atualizado com sucesso!' : 'Usuário cadastrado com sucesso!',
         'Fechar',
         { duration: 3000, panelClass: 'snack-success' }
       );
       this.router.navigate(['/']);
-    }, 1200);
-  }
-
-  onCancel(): void {
-    this.router.navigate(['/']);
+    });
   }
 }

@@ -1,10 +1,11 @@
 import { User } from "../models/user.model";
 import { validateCPF } from "../validators/cpf-cnpj.validator";
+import { generateUUID } from "../utils/uuid.util";
 
 export class UsersAdapter {
   static fromApi(user: any): User {
     return {
-      id: user.id,
+      id: generateUUID(),
       name: user.name,
       email: user.email,
       document: UsersAdapter.generateValidCpf(),

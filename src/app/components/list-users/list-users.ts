@@ -76,16 +76,25 @@ export class ListUsers implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // Carregar os usuários ao iniciar
-    this.store.dispatch(loadUsers());
-    
-    // Escutar mudanças nos usuários para atualizar o dataSource
     this.users$.pipe(takeUntil(this.destroy$)).subscribe((users: User[]) => {
       if (users) {
         this.dataSource = new MatTableDataSource(users);
-        this.dataSource.paginator = this.paginator;
+        
+        if (users.length === 0) {
+          this.store.dispatch(loadUsers());
+        }
+        
+        if (this.paginator) {
+          this.dataSource.paginator = this.paginator;
+        }
       }
     });
+  }
+
+  ngAfterViewInit(): void {
+    if (this.dataSource && this.paginator) {
+      this.dataSource.paginator = this.paginator;
+    }
   }
 
   ngOnDestroy(): void {

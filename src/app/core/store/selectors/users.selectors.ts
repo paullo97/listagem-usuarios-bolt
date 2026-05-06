@@ -18,3 +18,8 @@ export const selectError = createSelector(
   selectUsersState,
   (state) => state.error
 );
+
+export const selectSaving = createSelector(
+  selectUsersState,
+  (state) => state.saving
+);

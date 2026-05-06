@@ -14,3 +14,18 @@ export const loadUsersError = createAction(
   '[Users] Load Initial Users Error',
   props<{ error: any }>()
 );
+
+export const saveNewUser = createAction(
+  '[Users] Save New User',
+  props<{ user: User }>()
+);
+
+export const saveNewUserSuccess = createAction(
+  '[Users] Save New User Success'
+);
+
+export const saveNewUserError = createAction(
+  '[Users] Save New User Error',
+  props<{ error: any }>()
+);
+

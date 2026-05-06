@@ -22,4 +22,13 @@ export class UsersEffects {
       )
     )
   );
+
+  saveNewUser$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(UsersActions.saveNewUser),
+      switchMap(() =>
+        of(UsersActions.saveNewUserSuccess())
+      )
+    )
+  );
 }
