@@ -50,7 +50,7 @@
         <mat-form-field appearance="outline">
           <mat-label>Telefone</mat-label>
           <mat-icon matPrefix>phone_outlined</mat-icon>
-          <input matInput formControlName="phone" placeholder="(11) 91234-5678" [mask]="getPhoneMask()">
+          <input matInput formControlName="phone" placeholder="(11) 91234-5678" mask="(00) 90000-0000">
           @if(f['phone'].hasError('required')) {
             <mat-error>Telefone é obrigatório</mat-error>
           }

@@ -23,3 +23,8 @@ export const selectSaving = createSelector(
   selectUsersState,
   (state) => state.saving
 );
+
+export const selectEditing = createSelector(
+  selectUsersState,
+  (state) => state.userEdit
+);

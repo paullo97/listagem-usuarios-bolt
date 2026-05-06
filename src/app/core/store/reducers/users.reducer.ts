@@ -8,6 +8,7 @@ export interface UsersState {
   loading: boolean;
   saving: boolean;
   error: any;
+  userEdit: User | null;
 }
 
 export const initialState: UsersState = {
@@ -15,6 +16,7 @@ export const initialState: UsersState = {
   loading: false,
   saving: false,
   error: null,
+  userEdit: null,
 };
 
 export const usersReducer = createReducer(
@@ -62,5 +64,41 @@ export const usersReducer = createReducer(
     ...state,
     error,
     saving: false,
+  })),
+
+  on(UsersActions.initEditUser, (state) => ({
+    ...state,
+  })),
+
+  on(UsersActions.initEditUserGetSuccess, (state, { user }) => ({
+    ...state,
+    userEdit: user,
+  })),
+
+  on(UsersActions.initEditUserError, (state, { error }) => ({
+    ...state,
+    error,
+    userEdit: null,
+  })),
+
+  on(UsersActions.saveEditUser, (state, { user }) => ({
+    ...state,
+    saving: true,
+    error: null,
+    users: state.users.map(u => u.id === user.id ? user : u),
+  })),
+
+  on(UsersActions.saveEditUserSuccess, (state) => ({
+    ...state,
+    saving: false,
+    error: null,
+    userEdit: null,
+  })),
+
+  on(UsersActions.saveEditUserError, (state, { error }) => ({
+    ...state,
+    error,
+    saving: false,
+    userEdit: null,
   })),
 );

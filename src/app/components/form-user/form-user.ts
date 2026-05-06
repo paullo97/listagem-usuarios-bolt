@@ -6,8 +6,8 @@ import { Store } from '@ngrx/store';
 import { Actions, ofType, createEffect } from '@ngrx/effects';
 import { Subject, Observable } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { selectLoading, selectSaving } from '../../core/store/selectors/users.selectors';
-import { saveNewUser, saveNewUserSuccess } from '../../core/store/actions/users.actions';
+import { selectLoading, selectSaving, selectEditing } from '../../core/store/selectors/users.selectors';
+import { saveNewUser, saveNewUserSuccess, initEditUser, initEditUserGetSuccess, saveEditUser, saveEditUserSuccess } from '../../core/store/actions/users.actions';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -22,7 +22,6 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 import { cpfCnpjValidator } from '../../core/validators/cpf-cnpj.validator';
 import { User, DocumentType } from '../../core/models/user.model';
 
-// Expor o enum para uso no template
 export { DocumentType } from '../../core/models/user.model';
 
 @Component({
@@ -50,9 +49,10 @@ export class UserForm implements OnInit, OnDestroy {
   form!: FormGroup;
   isEditMode = false;
   isLoading$!: Observable<boolean>;
-  DocumentType = DocumentType; // Expor enum para o template
+  editingUser$!: Observable<User | null>;
+  DocumentType = DocumentType; 
 
-  private userId: number | null = null;
+  private userId: string | null = null;
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -62,13 +62,16 @@ export class UserForm implements OnInit, OnDestroy {
     private snackBar: MatSnackBar,
     private store: Store,
     private actions$: Actions
-  ) {}
+  ) {
+    this.editingUser$ = this.store.select(selectEditing);
+  }
 
   ngOnInit(): void {
     this.isLoading$ = this.store.select(selectSaving);
     this.buildForm();
     this.checkEditMode();
     this.setupSuccessListener();
+    this.setupEditingListener();
   }
 
   ngOnDestroy(): void {
@@ -96,24 +99,26 @@ export class UserForm implements OnInit, OnDestroy {
       return;
     }
 
-    this.store.dispatch(saveNewUser({ user: {...this.form.getRawValue(), createdAt: new Date() } }));
+    const formData = this.form.getRawValue();
+    
+    if (this.isEditMode && this.userId) {
+      const updatedUser = {
+        ...formData,
+        id: this.userId.toString(),
+        updatedAt: new Date()
+      };
+      this.store.dispatch(saveEditUser({ user: updatedUser }));
+    } else {
+      const newUser = {
+        ...formData,
+        createdAt: new Date()
+      };
+      this.store.dispatch(saveNewUser({ user: newUser }));
+    }
   }
 
   onCancel(): void {
     this.router.navigate(['/']);
-  }
-
-  getPhoneMask(): string {
-    const phoneControl = this.form?.get('phone');
-    if (!phoneControl?.value) return '(00) 00000-0000'; 
-    
-    const phoneNumbers = phoneControl.value.replace(/\D/g, '');
-    
-    if (phoneNumbers.length >= 11) {
-      return '(00) 00000-0000';
-    } else {
-      return '(00) 0000-0000';
-    }
   }
 
   private buildForm(): void {
@@ -142,38 +147,51 @@ export class UserForm implements OnInit, OnDestroy {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.isEditMode = true;
-      this.userId = +id;
+      this.userId = id;
       this.loadUser(this.userId);
     }
   }
 
-  private loadUser(id: number): void {
-    // ── Mock (remova ao integrar NgRx) ───────────────────────────────────
-    const mockUser = {
-      id,
-      name: 'Ana Carolina Silva',
-      email: 'ana.silva@email.com',
-      phone: '11912345678',
-      docType: DocumentType.CPF,
-      document: '529.982.247-25',
-      createdAt: new Date('2024-01-15T10:30:00'),
-      updatedAt: new Date('2024-11-20T14:22:00'),
-    };
-    this.patchForm(mockUser);
+  private loadUser(id: string): void {
+    this.store.dispatch(initEditUser({ id }));
+  }
+
+  private setupEditingListener(): void {
+    this.editingUser$.pipe(takeUntil(this.destroy$)).subscribe((user) => {
+      if (user) {
+        this.patchForm(user);
+      }
+    });
   }
 
   private patchForm(user: any): void {
     setTimeout(() => {
       this.form.patchValue({
-        docType: user.docType ?? 'cpf',
-        name:      user.name,
-        email:     user.email,
-        phone:     user.phone,
-        document:  user.document,
+        docType: user.docType ?? DocumentType.CPF,
+        name: user.name,
+        email: user.email,
+        phone: this.formatPhone(user.phone),
+        document: user.document,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
       });
     }, 0);
+  }
+
+  private formatPhone(phone: string): string {
+    if (!phone) return '';
+    
+    const numbers = phone.replace(/\D/g, '');
+    
+    if (numbers.length < 10) return phone;
+    
+    if (numbers.length === 11) {
+      return numbers.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+    } else if (numbers.length === 10) {
+      return numbers.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
+    }
+    
+    return phone;
   }
   
   private phoneValidator() {
@@ -193,7 +211,7 @@ export class UserForm implements OnInit, OnDestroy {
 
   private setupSuccessListener(): void {
     this.actions$.pipe(
-      ofType(saveNewUserSuccess),
+      ofType(saveNewUserSuccess, saveEditUserSuccess),
       takeUntil(this.destroy$)
     ).subscribe(() => {
       this.snackBar.open(

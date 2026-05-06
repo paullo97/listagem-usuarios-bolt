@@ -29,3 +29,31 @@ export const saveNewUserError = createAction(
   props<{ error: any }>()
 );
 
+export const initEditUser = createAction(
+  '[Users] Init Edit User',
+  props<{ id: string }>()
+);
+
+export const initEditUserGetSuccess = createAction(
+  '[Users] Init Edit User Get Success',
+  props<{ user: User }>()
+);
+
+export const initEditUserError = createAction(
+  '[Users] Init Edit User Error',
+  props<{ error: any }>()
+);
+
+export const saveEditUser = createAction(
+  '[Users] Save Edit User',
+  props<{ user: User }>()
+);
+
+export const saveEditUserSuccess = createAction(
+  '[Users] Save Edit User Success'
+);
+
+export const saveEditUserError = createAction(
+  '[Users] Save Edit User Error',
+  props<{ error: any }>()
+);

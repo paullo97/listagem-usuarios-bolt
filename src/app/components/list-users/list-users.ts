@@ -15,17 +15,8 @@ import { takeUntil } from 'rxjs/operators';
 
 import { User } from '../../core/models/user.model';
 import * as UsersSelectors from '../../core/store/selectors/users.selectors';
-import * as UsersActions from '../../core/store/actions/users.actions';
 import { loadUsers } from '../../core/store/actions/users.actions';
 
-// Define AppState interface since index.ts was deleted
-interface AppState {
-  users: {
-    users: User[];
-    loading: boolean;
-    error: any;
-  };
-}
 
 @Component({
   selector: 'app-list-users',
@@ -54,7 +45,7 @@ export class ListUsers implements OnInit, OnDestroy {
   error$: any;
   
   dataSource!: MatTableDataSource<User>;
-  pageSize = 5;
+  pageSize = 3;
   pageIndex = 0;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -68,7 +59,7 @@ export class ListUsers implements OnInit, OnDestroy {
 
   constructor(
     private router: Router,
-    private store: Store<AppState>
+    private store: Store
   ) {
     this.users$ = this.store.select(UsersSelectors.selectUsers);
     this.loading$ = this.store.select(UsersSelectors.selectLoading);
@@ -131,6 +122,34 @@ export class ListUsers implements OnInit, OnDestroy {
   getAvatarColor(name: string): string {
     const index = name.charCodeAt(0) % this.avatarColors.length;
     return this.avatarColors[index];
+  }
+
+  formatPhone(phone: string): string {
+    if (!phone) return '';
+    
+    const numbers = phone.replace(/\D/g, '');
+    
+    if (numbers.length === 11) {
+      return numbers.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+    } else if (numbers.length === 10) {
+      return numbers.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
+    }
+    
+    return phone;
+  }
+
+  formatDocument(doc: string, docType?: string): string {
+    if (!doc) return '';
+    
+    const numbers = doc.replace(/\D/g, '');
+    
+    if (numbers.length === 11) {
+      return numbers.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+    } else if (numbers.length === 14) {
+      return numbers.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
+    }
+    
+    return doc;
   }
 
 }
