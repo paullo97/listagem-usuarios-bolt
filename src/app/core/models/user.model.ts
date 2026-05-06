@@ -4,6 +4,6 @@ export interface User {
   email: string;
   cpf?: string;
   cnpj?: string;
-  dataCreation: string;
-  dataUpdate: string;
+  createdAt: string;
+  updatedAt: string;
 }
