@@ -6,10 +6,12 @@
         <span class="header-eyebrow">Listagem de</span>
         <h1 class="header-title">Usuários</h1>
       </div>
-      <button mat-fab extended color="primary" class="add-btn" (click)="onAddUser()">
-        <mat-icon>add</mat-icon>
-        Novo Usuário
-      </button>
+      <div class="header-actions">
+        <button mat-fab extended color="primary" class="add-btn" (click)="onAddUser()">
+          <mat-icon>add</mat-icon>
+          Novo Usuário
+        </button>
+      </div>
     </div>
 
     <mat-divider></mat-divider>
@@ -23,8 +25,14 @@
     <!-- Error State -->
     <div *ngIf="error$ | async" class="error-container">
       <mat-icon class="error-icon">error</mat-icon>
-      <p>Ocorreu um erro ao carregar os usuários.</p>
-      <button mat-raised-button color="primary" (click)="onRetry()">Tentar novamente</button>
+      <div class="error-content">
+        <p class="error-title">Ocorreu um erro ao carregar os usuários</p>
+        <p class="error-message">Não foi possível carregar a lista de usuários no momento. Tente novamente mais tarde.</p>
+        <button mat-raised-button color="primary" (click)="onRetry()">
+          <mat-icon>refresh</mat-icon>
+          Tentar novamente
+        </button>
+      </div>
     </div>
 
     <!-- Table -->

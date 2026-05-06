@@ -12,13 +12,12 @@ export class UsersService {
   private readonly API = 'https://jsonplaceholder.typicode.com/users';
 
   getUsers() {
-    console.log('TESTE')
     return this.http.get<any[]>(this.API).pipe(
       map(users => users.map(UsersAdapter.fromApi)),
       delay(5000),
       map(users => {
         const random = Math.random();
-        if (random < 0.3 && false) { // TODO: implementar roleta de erro e tratamento de erro
+        if (random < 0.3) {
           throw {
             message: 'Erro simulado pela roleta de erro!',
             timestamp: new Date().toISOString(),
