@@ -1,6 +1,6 @@
 import { AbstractControl } from "@angular/forms";
 
-function validateCPF(cpf: string): boolean {
+export function validateCPF(cpf: string): boolean {
   const n = cpf.replace(/\D/g, '');
   if (n.length !== 11 || /^(\d)\1+$/.test(n)) return false;
   let sum = 0;

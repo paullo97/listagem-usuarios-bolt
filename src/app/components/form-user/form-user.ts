@@ -50,7 +50,7 @@ export class UserForm implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private snackBar: MatSnackBar,
+    private snackBar: MatSnackBar
     // private store: Store  ← descomente ao integrar NgRx
   ) {}
 
@@ -104,12 +104,6 @@ export class UserForm implements OnInit, OnDestroy {
   }
 
   private loadUser(id: number): void {
-    // ── Com NgRx ────────────────────────────────────────────────────────
-    // this.store.dispatch(UsersActions.loadUser({ id }));
-    // this.store.select(selectCurrentUser)
-    //   .pipe(takeUntil(this.destroy$), filter(Boolean))
-    //   .subscribe(user => this.patchForm(user));
-
     // ── Mock (remova ao integrar NgRx) ───────────────────────────────────
     const mockUser = {
       id,
@@ -160,13 +154,6 @@ export class UserForm implements OnInit, OnDestroy {
       updatedAt: new Date(),
       ...(!this.isEditMode && { createdAt: new Date() }),
     };
-
-    // ── Com NgRx ────────────────────────────────────────────────────────
-    // if (this.isEditMode) {
-    //   this.store.dispatch(UsersActions.updateUser({ user: { id: this.userId!, ...payload } }));
-    // } else {
-    //   this.store.dispatch(UsersActions.createUser({ user: payload }));
-    // }
 
     // ── Mock (remova ao integrar NgRx) ───────────────────────────────────
     setTimeout(() => {
