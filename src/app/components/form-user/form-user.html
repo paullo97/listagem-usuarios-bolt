@@ -25,8 +25,12 @@
           <mat-label>Nome completo</mat-label>
           <mat-icon matPrefix>person_outline</mat-icon>
           <input matInput formControlName="name" placeholder="Ex: Ana Carolina Silva" autocomplete="off">
-          <mat-error *ngIf="f['name'].hasError('required')">Nome é obrigatório</mat-error>
-          <mat-error *ngIf="f['name'].hasError('minlength')">Mínimo de 3 caracteres</mat-error>
+          @if(f['name'].hasError('required')) {
+            <mat-error>Nome é obrigatório</mat-error>
+          }
+          @if(f['name'].hasError('minlength')) {
+            <mat-error>Mínimo de 3 caracteres</mat-error>
+          }
         </mat-form-field>
       </div>
 
@@ -35,15 +39,21 @@
           <mat-label>E-mail</mat-label>
           <mat-icon matPrefix>mail_outline</mat-icon>
           <input matInput formControlName="email" type="email" placeholder="email@exemplo.com" autocomplete="off">
-          <mat-error *ngIf="f['email'].hasError('required')">E-mail é obrigatório</mat-error>
-          <mat-error *ngIf="f['email'].hasError('email')">E-mail inválido</mat-error>
+          @if(f['email'].hasError('required')) {
+            <mat-error>E-mail é obrigatório</mat-error>
+          }
+          @if(f['email'].hasError('email')) {
+            <mat-error>E-mail inválido</mat-error>
+          }
         </mat-form-field>
 
         <mat-form-field appearance="outline">
           <mat-label>Telefone</mat-label>
           <mat-icon matPrefix>phone_outlined</mat-icon>
           <input matInput formControlName="phone" placeholder="(11) 91234-5678" mask="(00) 00000-0000">
-          <mat-hint>Opcional</mat-hint>
+          @if(f['phone'].hasError('required')) {
+            <mat-error>Telefone é obrigatório</mat-error>
+          }
         </mat-form-field>
       </div>
 
@@ -72,10 +82,12 @@
           <input matInput formControlName="document"
             [placeholder]="docType.value === 'cpf' ? '000.000.000-00' : '00.000.000/0000-00'"
             [mask]="docType.value === 'cpf' ? '000.000.000-00' : '00.000.000/0000-00'">
-          <mat-error *ngIf="f['document'].hasError('required')">Documento é obrigatório</mat-error>
-          <mat-error *ngIf="f['document'].hasError('invalidDocument')">
-            {{ docType.value === 'cpf' ? 'CPF inválido' : 'CNPJ inválido' }}
-          </mat-error>
+            @if(f['document'].hasError('required')) {
+              <mat-error>Documento é obrigatório</mat-error>
+            }
+            @if(f['document'].hasError('invalidDocument')) {
+              <mat-error>{{ docType.value === 'cpf' ? 'CPF inválido' : 'CNPJ inválido' }}</mat-error>
+            }
         </mat-form-field>
       </div>
 
@@ -110,8 +122,11 @@
       <button mat-flat-button color="primary" type="submit" class="btn-save"
         [disabled]="form.invalid || isLoading"
         (click)="onSubmit()">
-        <mat-icon *ngIf="!isLoading">check</mat-icon>
-        <mat-spinner *ngIf="isLoading" diameter="18" class="btn-spinner"></mat-spinner>
+        @if(isLoading) {
+          <mat-spinner diameter="18" class="btn-spinner"></mat-spinner>
+        } @else {
+          <mat-icon>check</mat-icon>
+        }
         {{ isLoading ? 'Salvando...' : 'Salvar' }}
       </button>
     </div>

@@ -76,7 +76,7 @@ export class UserForm implements OnInit, OnDestroy {
     this.form = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
-      phone: [''],
+      phone: ['', [Validators.required]],
       docType: ['cpf'],
       document: [
         '',
