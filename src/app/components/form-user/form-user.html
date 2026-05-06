@@ -1,0 +1,120 @@
+<div class="page-wrapper">
+  <div class="content-card">
+
+    <!-- Header -->
+    <div class="card-header">
+      <button mat-icon-button class="back-btn" (click)="onCancel()" matTooltip="Voltar">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div class="header-text">
+        <span class="header-eyebrow">{{ isEditMode ? 'Edição' : 'Cadastro' }}</span>
+        <h1 class="header-title">{{ isEditMode ? 'Editar usuário' : 'Novo usuário' }}</h1>
+      </div>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <!-- Form -->
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-body" novalidate>
+
+      <!-- Seção: Informações pessoais -->
+      <p class="section-label">Informações pessoais</p>
+
+      <div class="field-row">
+        <mat-form-field appearance="outline" class="field-full">
+          <mat-label>Nome completo</mat-label>
+          <mat-icon matPrefix>person_outline</mat-icon>
+          <input matInput formControlName="name" placeholder="Ex: Ana Carolina Silva" autocomplete="off">
+          <mat-error *ngIf="f['name'].hasError('required')">Nome é obrigatório</mat-error>
+          <mat-error *ngIf="f['name'].hasError('minlength')">Mínimo de 3 caracteres</mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="field-row cols-2">
+        <mat-form-field appearance="outline">
+          <mat-label>E-mail</mat-label>
+          <mat-icon matPrefix>mail_outline</mat-icon>
+          <input matInput formControlName="email" type="email" placeholder="email@exemplo.com" autocomplete="off">
+          <mat-error *ngIf="f['email'].hasError('required')">E-mail é obrigatório</mat-error>
+          <mat-error *ngIf="f['email'].hasError('email')">E-mail inválido</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Telefone</mat-label>
+          <mat-icon matPrefix>phone_outlined</mat-icon>
+          <input matInput formControlName="phone" placeholder="(11) 91234-5678" mask="(00) 00000-0000">
+          <mat-hint>Opcional</mat-hint>
+        </mat-form-field>
+      </div>
+
+      <mat-divider class="section-divider"></mat-divider>
+
+      <!-- Seção: Documento -->
+      <p class="section-label">Documento</p>
+
+      <div class="doc-toggle-group">
+        <button type="button" mat-stroked-button
+          [class.active-doc]="docType.value === 'cpf'"
+          (click)="setDocType('cpf')">
+          CPF
+        </button>
+        <button type="button" mat-stroked-button
+          [class.active-doc]="docType.value === 'cnpj'"
+          (click)="setDocType('cnpj')">
+          CNPJ
+        </button>
+      </div>
+
+      <div class="field-row">
+        <mat-form-field appearance="outline" class="field-full">
+          <mat-label>{{ docType.value === 'cpf' ? 'CPF' : 'CNPJ' }}</mat-label>
+          <mat-icon matPrefix>badge</mat-icon>
+          <input matInput formControlName="document"
+            [placeholder]="docType.value === 'cpf' ? '000.000.000-00' : '00.000.000/0000-00'"
+            [mask]="docType.value === 'cpf' ? '000.000.000-00' : '00.000.000/0000-00'">
+          <mat-error *ngIf="f['document'].hasError('required')">Documento é obrigatório</mat-error>
+          <mat-error *ngIf="f['document'].hasError('invalidDocument')">
+            {{ docType.value === 'cpf' ? 'CPF inválido' : 'CNPJ inválido' }}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <mat-divider class="section-divider"></mat-divider>
+
+      <!-- Seção: Registro (datas readonly) -->
+      <p class="section-label">Registro</p>
+
+      <div class="date-chips">
+        <div class="date-chip">
+          <span class="date-chip-label">Criado em</span>
+          <span class="date-chip-value">
+            {{ form.get('createdAt')?.value ? (form.get('createdAt')?.value | date:'dd MMM yyyy, HH:mm') : '—' }}
+          </span>
+        </div>
+        <div class="date-chip">
+          <span class="date-chip-label">Atualizado em</span>
+          <span class="date-chip-value">
+            {{ form.get('updatedAt')?.value ? (form.get('updatedAt')?.value | date:'dd MMM yyyy, HH:mm') : '—' }}
+          </span>
+        </div>
+      </div>
+
+    </form>
+
+    <!-- Footer -->
+    <mat-divider></mat-divider>
+    <div class="card-footer">
+      <button mat-stroked-button type="button" class="btn-cancel" (click)="onCancel()">
+        Cancelar
+      </button>
+      <button mat-flat-button color="primary" type="submit" class="btn-save"
+        [disabled]="form.invalid || isLoading"
+        (click)="onSubmit()">
+        <mat-icon *ngIf="!isLoading">check</mat-icon>
+        <mat-spinner *ngIf="isLoading" diameter="18" class="btn-spinner"></mat-spinner>
+        {{ isLoading ? 'Salvando...' : 'Salvar' }}
+      </button>
+    </div>
+
+  </div>
+</div>

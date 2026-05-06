@@ -1,0 +1,93 @@
+<div class="page-wrapper">
+  <div class="content-card">
+
+    <div class="card-header">
+      <div class="header-left">
+        <span class="header-eyebrow">Listagem de</span>
+        <h1 class="header-title">Usuários</h1>
+      </div>
+      <button mat-fab extended color="primary" class="add-btn" (click)="onAddUser()">
+        <mat-icon>add</mat-icon>
+        Novo Usuário
+      </button>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <div class="table-wrapper">
+      <table mat-table [dataSource]="users" class="users-table">
+
+        <!-- Avatar + Name Column -->
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>Nome</th>
+          <td mat-cell *matCellDef="let user">
+            <div class="user-cell">
+              <div class="avatar" [style.background]="getAvatarColor(user.name)">
+                {{ getInitials(user.name) }}
+              </div>
+              <div class="user-info">
+                <span class="user-name">{{ user.name }}</span>
+                <span class="user-email">{{ user.email }}</span>
+              </div>
+            </div>
+          </td>
+        </ng-container>
+
+        
+        <!-- Phone Column -->
+        <ng-container matColumnDef="phone">
+          <th mat-header-cell *matHeaderCellDef>Telefone</th>
+          <td mat-cell *matCellDef="let user">
+            <span class="user-phone">{{ user.phone }}</span>
+          </td>
+        </ng-container>
+
+        <!-- Document Column -->
+        <ng-container matColumnDef="document">
+          <th mat-header-cell *matHeaderCellDef>CPF/CNPJ</th>
+          <td mat-cell *matCellDef="let user">
+            <span class="user-document">{{ user.document }}</span>
+          </td>
+        </ng-container>
+
+        <!-- Date Column -->
+        <ng-container matColumnDef="date">
+          <th mat-header-cell *matHeaderCellDef>Ultima Atualização</th>
+          <td mat-cell *matCellDef="let user">
+            <span class="user-date">{{ user.updatedAt || user.createdAt | date: 'dd/MM/yyyy' }}</span>
+          </td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let user" class="actions-cell">
+            <button mat-icon-button class="edit-btn" matTooltip="Editar usuário" (click)="onEdit(user)">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="table-row"></tr>
+
+        <!-- Empty state -->
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell empty-state" [attr.colspan]="displayedColumns.length">
+            <mat-icon>group_off</mat-icon>
+            <p>Nenhum usuário encontrado</p>
+          </td>
+        </tr>
+
+      </table>
+    </div>
+
+    <mat-paginator
+      [pageSize]="10"
+      [pageSizeOptions]="[5, 10, 25]"
+      showFirstLastButtons
+      aria-label="Selecionar página">
+    </mat-paginator>
+
+  </div>
+</div>
