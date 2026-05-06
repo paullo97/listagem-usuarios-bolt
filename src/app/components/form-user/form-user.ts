@@ -20,6 +20,10 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 import { cpfCnpjValidator } from '../../core/validators/cpf-cnpj.validator';
+import { User, DocumentType } from '../../core/models/user.model';
+
+// Expor o enum para uso no template
+export { DocumentType } from '../../core/models/user.model';
 
 @Component({
   selector: 'app-user-form',
@@ -46,6 +50,7 @@ export class UserForm implements OnInit, OnDestroy {
   form!: FormGroup;
   isEditMode = false;
   isLoading$!: Observable<boolean>;
+  DocumentType = DocumentType; // Expor enum para o template
 
   private userId: number | null = null;
   private destroy$ = new Subject<void>();
@@ -79,7 +84,7 @@ export class UserForm implements OnInit, OnDestroy {
     return this.form.get('docType')!;
   }
 
-  setDocType(type: 'cpf' | 'cnpj'): void {
+  setDocType(type: DocumentType): void {
     setTimeout(() => {
       this.docType.setValue(type);
     }, 0);
@@ -116,7 +121,7 @@ export class UserForm implements OnInit, OnDestroy {
       name: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
       phone: ['', [Validators.required, this.phoneValidator()]],
-      docType: ['cpf'],
+      docType: [DocumentType.CPF],
       document: [
         '',
         [Validators.required, cpfCnpjValidator(() => this.docType.value)],
@@ -149,7 +154,7 @@ export class UserForm implements OnInit, OnDestroy {
       name: 'Ana Carolina Silva',
       email: 'ana.silva@email.com',
       phone: '11912345678',
-      docType: 'cpf' as 'cpf' | 'cnpj',
+      docType: DocumentType.CPF,
       document: '529.982.247-25',
       createdAt: new Date('2024-01-15T10:30:00'),
       updatedAt: new Date('2024-11-20T14:22:00'),

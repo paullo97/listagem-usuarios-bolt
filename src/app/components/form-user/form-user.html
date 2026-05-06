@@ -67,29 +67,29 @@
 
       <div class="doc-toggle-group">
         <button type="button" mat-stroked-button
-          [class.active-doc]="docType.value === 'cpf'"
-          (click)="setDocType('cpf')">
+          [class.active-doc]="docType.value === DocumentType.CPF"
+          (click)="setDocType(DocumentType.CPF)">
           CPF
         </button>
         <button type="button" mat-stroked-button
-          [class.active-doc]="docType.value === 'cnpj'"
-          (click)="setDocType('cnpj')">
+          [class.active-doc]="docType.value === DocumentType.CNPJ"
+          (click)="setDocType(DocumentType.CNPJ)">
           CNPJ
         </button>
       </div>
 
       <div class="field-row">
         <mat-form-field appearance="outline" class="field-full">
-          <mat-label>{{ docType.value === 'cpf' ? 'CPF' : 'CNPJ' }}</mat-label>
+          <mat-label>{{ docType.value === DocumentType.CPF ? 'CPF' : 'CNPJ' }}</mat-label>
           <mat-icon matPrefix>badge</mat-icon>
           <input matInput formControlName="document"
-            [placeholder]="docType.value === 'cpf' ? '000.000.000-00' : '00.000.000/0000-00'"
-            [mask]="docType.value === 'cpf' ? '000.000.000-00' : '00.000.000/0000-00'">
+            [placeholder]="docType.value === DocumentType.CPF ? '000.000.000-00' : '00.000.000/0000-00'"
+            [mask]="docType.value === DocumentType.CPF ? '000.000.000-00' : '00.000.000/0000-00'">
             @if(f['document'].hasError('required')) {
               <mat-error>Documento é obrigatório</mat-error>
             }
             @if(f['document'].hasError('invalidDocument')) {
-              <mat-error>{{ docType.value === 'cpf' ? 'CPF inválido' : 'CNPJ inválido' }}</mat-error>
+              <mat-error>{{ docType.value === DocumentType.CPF ? 'CPF inválido' : 'CNPJ inválido' }}</mat-error>
             }
         </mat-form-field>
       </div>
