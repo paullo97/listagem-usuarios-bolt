@@ -57,3 +57,18 @@ export const saveEditUserError = createAction(
   '[Users] Save Edit User Error',
   props<{ error: any }>()
 );
+
+export const deleteUser = createAction(
+  '[Users] Delete User',
+  props<{ id: string }>()
+);
+
+export const deleteUserSuccess = createAction(
+  '[Users] Delete User Success',
+  props<{ id: string }>()
+);
+
+export const deleteUserError = createAction(
+  '[Users] Delete User Error',
+  props<{ error: any }>()
+);

@@ -95,10 +95,27 @@ export const usersReducer = createReducer(
     userEdit: null,
   })),
 
-  on(UsersActions.saveEditUserError, (state, { error }) => ({
+  on(UsersActions.saveEditUserError, (state) => ({
     ...state,
-    error,
     saving: false,
+    error: 'Erro ao editar usuário'
+  })),
+
+  on(UsersActions.deleteUser, (state) => ({
+    ...state,
+    saving: true,
+    error: null
+  })),
+  on(UsersActions.deleteUserSuccess, (state, { id }) => ({
+    ...state,
+    saving: false,
+    users: state.users.filter(user => user.id !== id),
+    error: null
+  })),
+  on(UsersActions.deleteUserError, (state) => ({
+    ...state,
+    saving: false,
+    error: 'Erro ao excluir usuário',
     userEdit: null,
   })),
 );

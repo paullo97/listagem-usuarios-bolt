@@ -60,4 +60,13 @@ export class UsersEffects {
       )
     )
   );
+
+  deleteUser$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(UsersActions.deleteUser),
+      switchMap(({ id }) => {
+        return of(UsersActions.deleteUserSuccess({ id }));
+      })
+    )
+  );
 }
