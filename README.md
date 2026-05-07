@@ -2,6 +2,8 @@
 
 Uma aplicação Angular moderna e completa para gestão de clientes, desenvolvida com as melhores práticas do framework e arquitetura robusta.
 
+🔗 **[Acesse a aplicação aqui](https://paullo97.github.io/listagem-usuarios-bolt/)**
+
 ## ✨ Funcionalidades
 
 - **📝 Listagem de Clientes** - Visualização em tabela com paginação e avatares personalizados
@@ -85,17 +87,6 @@ ng serve
 # A aplicação estará disponível em http://localhost:4200
 ```
 
-### Build de Produção
-
-```bash
-# Gerar build otimizado
-yarn build
-# ou
-ng build
-
-# Os arquivos serão gerados na pasta dist/
-```
-
 ### Testes
 
 ```bash
@@ -175,30 +166,6 @@ const routes = [
 - **CNPJ**: `XX.XXX.XXX/XXXX-XX`
 - **Datas**: Formato brasileiro com `DatePipe`
 
-## 🔧 Configurações Adicionais
-
-### Variáveis de Ambiente
-O projeto utiliza configurações padrão do Angular para diferentes ambientes:
-- `development`: Build para desenvolvimento com source maps
-- `production`: Build otimizado com minificação e hashing
-
-### Prettier
-Configuração automática de formatação de código:
-```json
-{
-  "semi": true,
-  "trailingComma": "es5",
-  "singleQuote": true,
-  "printWidth": 80,
-  "tabWidth": 2
-}
-```
-
-### Git Hooks
-O projeto está configurado com hooks para garantir qualidade:
-- Pre-commit: Validação de lint e formatação
-- Pre-push: Execução de testes automatizados
-
 ## 📊 Arquitetura e Boas Práticas
 
 ### Componentes Standalone
@@ -220,23 +187,6 @@ O projeto está configurado com hooks para garantir qualidade:
 - **Centralizado**: Estado de erro global
 - **Feedback**: Snack bars informativas
 - **Recovery**: Botões de retry onde aplicável
-
-## 🚀 Deploy
-
-### GitHub Pages
-```bash
-# Build para GitHub Pages
-ng build --base-href /repository-name/
-
-# Deploy na pasta docs
-ng build --output-path docs
-```
-
-### Vercel
-```bash
-# Build para Vercel
-ng build --configuration production
-```
 
 ## 🤝 Contribuição
 
