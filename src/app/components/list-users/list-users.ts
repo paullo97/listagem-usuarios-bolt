@@ -9,13 +9,15 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatDialog } from '@angular/material/dialog';
 import { CommonModule, DatePipe, AsyncPipe } from '@angular/common';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { User } from '../../core/models/user.model';
 import * as UsersSelectors from '../../core/store/selectors/users.selectors';
-import { loadUsers } from '../../core/store/actions/users.actions';
+import { loadUsers, deleteUser } from '../../core/store/actions/users.actions';
+import { ConfirmDeleteDialogComponent } from '../confirm-delete-dialog/confirm-delete-dialog.component';
 
 
 @Component({
@@ -59,7 +61,8 @@ export class ListUsers implements OnInit, OnDestroy {
 
   constructor(
     private router: Router,
-    private store: Store
+    private store: Store,
+    private dialog: MatDialog
   ) {
     this.users$ = this.store.select(UsersSelectors.selectUsers);
     this.loading$ = this.store.select(UsersSelectors.selectLoading);
@@ -150,6 +153,22 @@ export class ListUsers implements OnInit, OnDestroy {
     }
     
     return doc;
+  }
+
+  onDelete(user: User): void {
+    const dialogRef = this.dialog.open(ConfirmDeleteDialogComponent, {
+      data: {
+        userName: user.name,
+        userEmail: user.email
+      },
+      width: '400px'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.store.dispatch(deleteUser({ id: user.id }));
+      }
+    });
   }
 
 }

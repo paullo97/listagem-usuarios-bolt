@@ -54,6 +54,7 @@
       background: #fafafa;
 
       .edit-btn { opacity: 1; }
+      .delete-btn { opacity: 1; }
     }
 
     &:last-child .mat-mdc-cell { border-bottom: none; }
@@ -108,6 +109,14 @@
   color: #9e9e9e !important;
 
   &:hover { color: #1976d2 !important; }
+}
+
+.delete-btn {
+  opacity: 0;
+  transition: opacity 0.15s ease, color 0.15s ease;
+  color: #9e9e9e !important;
+
+  &:hover { color: #d32f2f !important; }
 }
 
 .error-container {
